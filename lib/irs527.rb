@@ -9,16 +9,17 @@ module Irs527
       file_8872 = File.open('8872.txt', 'w')
       file_skeda = File.open('skeda.txt', 'w')
       file_skedb = File.open('skedb.txt', 'w')
-      f = File.open(path).readlines
-      f.each do |line|
-        if line[0..1] == "1|"
-          file_8871.write(line)
-        elsif line[0..1] == "2|"
-          file_8872.write(line)
-        elsif line[0..1] == "A|"
-          file_skeda.write(line)
-        elsif line[0..1] == "B|"
-          file_skedb.write(line)
+      File.open(path) do |f|
+        while line = f.gets
+          if line[0..1] == "1|"
+            file_8871.write(line)
+          elsif line[0..1] == "2|"
+            file_8872.write(line)
+          elsif line[0..1] == "A|"
+            file_skeda.write(line)
+          elsif line[0..1] == "B|"
+            file_skedb.write(line)
+          end
         end
       end
       file_8871.close
