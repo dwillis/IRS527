@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Irs527::VERSION
   spec.authors       = ["Derek Willis"]
   spec.email         = ["dwillis@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Parses IRS 527 full data text file into parts.}
+  spec.description   = %q{Takes one file and makes it into four files.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
