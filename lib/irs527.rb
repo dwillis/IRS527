@@ -1,32 +1,26 @@
 require "irs527/version"
-
+require "pry"
+require "irs527/form"
+require "irs527/form_8871"
 module Irs527
-
   class TextParser
-
     def self.parse(path)
-      file_8871 = File.open('8871.txt', 'w')
-      file_8872 = File.open('8872.txt', 'w')
-      file_skeda = File.open('skeda.txt', 'w')
-      file_skedb = File.open('skedb.txt', 'w')
-      File.open(path) do |f|
-        while line = f.gets
-          if line[0..1] == "1|"
-            file_8871.write(line)
-          elsif line[0..1] == "2|"
-            file_8872.write(line)
-          elsif line[0..1] == "A|"
-            file_skeda.write(line)
-          elsif line[0..1] == "B|"
-            file_skedb.write(line)
-          end
+      file = File.open(path)
+      forms = []
+      loop do
+        begin
+          line = file.readline.encode('UTF-8', invalid: :replace, replace: ' ')
+        rescue EOFError
+          break
+        end
+        if line[0] == "1"
+          form = Form.new(line)
+          form = form.parse_line
+
+          forms << form
         end
       end
-      file_8871.close
-      file_8872.close
-      file_skeda.close
-      file_skedb.close
+      binding.pry
     end
   end
-
 end
