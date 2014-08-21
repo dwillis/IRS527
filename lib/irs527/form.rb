@@ -9,7 +9,7 @@ module Irs527
     end
 
     def supplementary?
-      ["D", "R", "E"].include?(@line[0])
+      ["B", "E", "A", "R", "D"].include?(@line[0])
     end
 
     def parse_line
@@ -18,10 +18,10 @@ module Irs527
                 Form8871.new(@line, form_properties[:form_8871])
               when '2'
                 Form8872.new(@line, form_properties[:form_8872])
-              # when 'B'
-              #   FormSchedB.new(@line, form_properties[:sched_b])
-              # when 'A'
-              #   FormSchedA.new(@line, form_properties[:sched_a])
+              when 'A'
+                FormSchedA.new(@line, form_properties[:sched_b])
+              when 'B'
+                FormSchedB.new(@line, form_properties[:sched_a])
               end
 
       if form
