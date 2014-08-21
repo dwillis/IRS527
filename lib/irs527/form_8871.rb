@@ -60,7 +60,7 @@ module Irs527
         director_id: supp_line[2],
         org_name: supp_line[3],
         ein: supp_line[4],
-        addr: addr("R", supp_line[5..10])
+        addr: addr("D", supp_line[5..10])
       }
     end
 
