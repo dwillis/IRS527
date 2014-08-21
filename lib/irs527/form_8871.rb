@@ -19,7 +19,7 @@ module Irs527
     def parse_properties
       @properties.each do |property,value|
         if value.is_a?(Hash)
-          parse(property, value)
+          parse_address(property, value)
         elsif property == :header
           header(@line[value])
         else
@@ -28,7 +28,7 @@ module Irs527
       end
     end
 
-    def parse(category, sub_hash)
+    def parse_address(category, sub_hash)
       sub_hash.each do |k,v|
         if k == :addr
           address = addr(category, @line[v])
