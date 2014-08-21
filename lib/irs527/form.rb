@@ -5,7 +5,7 @@ module Irs527
       :sched_a, :sched_b
     ]
     def initialize(line)
-      @line = line.chomp.split("|")
+      @line = line
     end
 
     def supplementary?
@@ -13,19 +13,17 @@ module Irs527
     end
 
     def parse_line
-      form =  case @line[0]
-              when '1'
+      form =  if @line[0] == "1"
                 Form8871.new(@line, form_properties[:form_8871])
-              when '2'
+              elsif @line[0] == "2"
                 Form8872.new(@line, form_properties[:form_8872])
-              when 'A'
-                FormSchedA.new(@line, form_properties[:sched_b])
-              when 'B'
-                FormSchedB.new(@line, form_properties[:sched_a])
               end
 
-      if form
+      if form.truncated?
+        return form
+      else
         form.parse_properties
+        form.line = nil
         return form
       end
     end
