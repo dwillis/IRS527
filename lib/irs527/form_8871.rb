@@ -1,32 +1,30 @@
 module Irs527
   class Form8871 < Form
+    FOOTERS = [
+      :exempt_8872, :exempt_state, :exempt_990,
+      :purpose, :material_change_date, :date,
+      :related_entity_bypass, :eain_bypass
+    ]
+
+    HEADERS = [:record_type, :form_type, :form_id, :init_rpt, :amend_rpt, :final_rpt, :ein]
+
     def initialize(line, properties)
       @line = line
       @properties = properties
+      @d_records = []
+      @r_records = []
+      @e_records = []
     end
 
     def parse_properties
-      @properties.each do |k,v|
-        if v.is_a?(Hash)
-          parse(k, v)
-        elsif k == :header
-          header(@line[v])
+      @properties.each do |property,value|
+        if value.is_a?(Hash)
+          parse(property, value)
+        elsif property == :header
+          header(@line[value])
         else
-          footer(@line[v])
+          footer(@line[value])
         end
-      end
-    end
-
-    def footer(foot)
-      footers = [
-        :exempt_8872, :exempt_state, :exempt_990,
-        :purpose, :material_change_date, :date,
-        :related_entity_bypass, :eain_bypass
-      ]
-
-      footers.each_with_index do |f,i|
-        val = format!(f, foot[i])
-        define_var(f, val)
       end
     end
 
@@ -35,25 +33,54 @@ module Irs527
         if k == :addr
           address = addr(category, @line[v])
           address.each do |sub_cat, val|
-            val = format!(sub_cat, val)
-            define_var(sub_cat, val)
+            val = format(sub_cat, val)
+            instance_variable_set("@#{sub_cat}", val)
           end
         else
-          define_var(k, @line[v])
+          instance_variable_set("@#{k}", @line[v])
         end
       end
     end
 
-    def define_var(cat, val)
-      instance_variable_set("@#{cat}", val)
+    def footer(foot)
+      FOOTERS.each_with_index do |f,i|
+        format(f, foot[i]) { |field| instance_variable_set("@#{f}", field) }
+      end
     end
 
     def header(head)
-      headers = [:record_type, :form_type, :form_id, :init_rpt, :amend_rpt, :final_rpt, :ein]
-      headers.each_with_index do |h,i|
-        val = format!(h, head[i])
-        define_var(h, val)
+      HEADERS.each_with_index do |h,i|
+        format(h, head[i]) { |field| instance_variable_set("@#{h}", field) }
       end
+    end
+
+    def d_record=(supp_line)
+      @d_records << {
+        form_id: supp_line[1],
+        director_id: supp_line[2],
+        org_name: supp_line[3],
+        ein: supp_line[4],
+        addr: addr("R", supp_line[5..10])
+      }
+    end
+
+    def r_record=(supp_line)
+      @r_records << {
+        form_id: supp_line[1],
+        entity_id: supp_line[2],
+        org_name: supp_line[3],
+        ein: supp_line[4],
+        addr: addr("R", supp_line[5..-1])
+      }
+    end
+
+    def e_record=(supp_line)
+      @e_records << {
+        form_id: supp_line[1],
+        eain_id: supp_line[2],
+        elect_auth_id: supp_line[4],
+        state_issued: supp_line[5]
+      }
     end
   end
 end
