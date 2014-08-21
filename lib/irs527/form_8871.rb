@@ -1,5 +1,8 @@
 module Irs527
   class Form8871 < Form
+    attr_accessor :line
+    attr_reader :e_records, :r_records, :d_records
+
     FOOTERS = [
       :exempt_8872, :exempt_state, :exempt_990,
       :purpose, :material_change_date, :date,
@@ -14,6 +17,19 @@ module Irs527
       @d_records = []
       @r_records = []
       @e_records = []
+    end
+
+    def truncated?
+      @line.length < 44
+    end
+
+    def incomplete?
+      !@line.nil?
+    end
+
+    def truncated=(missing_fields)
+      @line[-1] << missing_fields.shift
+      @line.concat(missing_fields)
     end
 
     def parse_properties
