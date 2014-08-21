@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+require "Irs527"
+require "zip"
+require "net/http"
+
+
+path, command = ARGV
+
+case command
+when "-p"
+  file = Irs527::Utility.retrieve_data(path)
+  Irs527::Utility.parse("#{path}/#{file}")
+when "-r"
+else
+  Irs527::Utility.parse(path)
+end
