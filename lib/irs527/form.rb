@@ -18,10 +18,10 @@ module Irs527
                 Form8871.new(@line, form_properties[:form_8871])
               when '2'
                 Form8872.new(@line, form_properties[:form_8872])
-              when 'B'
-                FormSchedB.new(@line, form_properties[:sched_b])
-              when 'A'
-                FormSchedA.new(@line, form_properties[:sched_a])
+              # when 'B'
+              #   FormSchedB.new(@line, form_properties[:sched_b])
+              # when 'A'
+              #   FormSchedA.new(@line, form_properties[:sched_a])
               end
 
       if form
@@ -41,12 +41,12 @@ module Irs527
       }
 
       form[:form_8872] = {
-        header: 0..11,
-        org: {addr: 12..17, email: 18, estab_date: 19},
-        custodian: {name: 20, addr: 21..26},
-        contact: {name: 27, addr: 28..33},
-        business: {addr: 34..39},
-        footer: 40..-1
+        header: 0..10,
+        org: {addr: 11..16, email: 17, estab_date: 18},
+        custodian: {name: 19, addr: 20..25},
+        contact: {name: 26, addr: 27..32},
+        business: {addr: 33..38},
+        footer: 39..-1
       }
 
       form[:sched_a] = {
@@ -83,7 +83,7 @@ module Irs527
     end
 
     def date_check?(property)
-      [:estab_date, :date].include?(property)
+      [:estab_date, :date, :period_beg_date, :period_end_date].include?(property)
     end
 
     def addr(type, section)
