@@ -1,7 +1,7 @@
 module Irs527
   class Form8872 < Form
     attr_accessor :line
-    attr_reader :sched_b_forms, :sched_a_forms
+    attr_reader :sched_b_forms, :sched_a_forms, :ein, :name, :date
 
     HEADERS = [:record_type, :form_type, :form_id, :period_beg_date, :period_end_date,
       :init_rpt, :amend_rpt, :final_rpt, :change_of_addr, :name, :ein]
@@ -10,9 +10,10 @@ module Irs527
       :sched_b, :total_sched_a, :total_sched_b, :date
     ]
 
-    def initialize(line, properties)
+    def initialize(line, properties, type)
       @line       = line
       @properties = properties
+      @type = type
       @sched_a_forms = []
       @sched_b_forms = []
     end
@@ -27,10 +28,16 @@ module Irs527
           footer(@line[value])
         end
       end
+
+      return self
     end
 
     def truncated?
       @line.length < 49
+    end
+
+    def non_amend?
+      !@amend_rpt
     end
 
     def truncated=(missing_fields)
@@ -103,7 +110,7 @@ module Irs527
       end
     end
 
-    def a_record=(supp_line)
+    def sched_a=(supp_line)
       @sched_a_forms << {
         record_type: supp_line[0],
         form_id: supp_line[1],
@@ -115,12 +122,12 @@ module Irs527
         employer: supp_line[12],
         contrib_amt: supp_line[13].to_f,
         contrib_occupation: supp_line[14],
-        agg_contrib_ytd: supp_line[15],
+        agg_contrib_ytd: supp_line[15].to_f,
         date: format(:date, supp_line[16])
       }
     end
 
-    def b_record=(supp_line)
+    def sched_b=(supp_line)
       @sched_b_forms << {
         record_type: supp_line[0],
         form_id: supp_line[1],
@@ -139,6 +146,14 @@ module Irs527
 
     def incomplete?
       !@line.nil?
+    end
+
+    def expend_total
+      @sched_b_forms.inject { |x,y| x + y }
+    end
+
+    def contrib_total
+      @sched_a_forms.inject { |x,y| x[:contrib_amt] + y[:contrib_amt] }
     end
   end
 end

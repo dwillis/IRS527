@@ -36,33 +36,43 @@ module Irs527
 
     def self.parse(path)
       file = File.open(path)
-      forms = []
+      forms = {}
       file_detail = file.readline.chomp.split("|")
       loop do
-        begin
-          line = file.readline.encode('UTF-8', invalid: :replace, replace: ' ')
-        rescue EOFError
-          break
-        end
-
+        break if file.eof?
+        line = file.readline.encode('UTF-8', invalid: :replace, replace: ' ')
         line = line.chomp.split("|")
-        if !line.empty?
-          if ("BEARD12".include?(line[0]) && line[0] != "")
-            form = Form.new(line)
-            if form.supplementary?
-              primary_form = forms.last
-              form.update(primary_form)
-            else
-              forms << form.parse_line
-            end
+
+        if Form.valid?(line)
+          form = Form.new(line)
+          @ein_pointer = form.ein
+          if forms[@ein_pointer]
+            forms[@ein_pointer] << form
           else
-            primary_form = forms.last
-            if primary_form.incomplete?
-              primary_form.truncated = line
-              forms[-1] = primary_form.parse_line
-            end
+            forms[@ein_pointer] = [form]
           end
         end
+
+        binding.pry
+
+
+        # if !line.empty?
+        #   if ("BEARD12".include?(line[0]) && line[0] != "")
+        #     form = Form.new(line)
+        #     if form.supplementary?
+        #       primary_form = forms.last
+        #       form.update(primary_form)
+        #     else
+        #       forms << form.parse_line
+        #     end
+        #   else
+        #     primary_form = forms.last
+        #     if primary_form.incomplete?
+        #       primary_form.truncated = line
+        #       forms[-1] = primary_form.parse_line
+        #     end
+        #   end
+        # end
       end
 
       file.close

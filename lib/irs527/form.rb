@@ -1,31 +1,64 @@
 module Irs527
+
   class Form
+
+    def self.valid?(line)
+      line[0] && ['B', 'E', 'A', 'R', 'D', '1', '2'].include?(line[0])
+    end
+
     EXEMPTIONS = [:exempt_8872, :exempt_990, :related_entity_bypass,
       :eain_bypass, :init_rpt, :amend_rpt, :final_rpt, :change_of_addr,
       :sched_a, :sched_b
     ]
+
+    attr_accessor :line
+
     def initialize(line)
       @line = line
     end
 
-    def supplementary?
-      ["B", "E", "A", "R", "D"].include?(@line[0])
+    def create!
+      form = if @type[:form_type] == :form_8871
+        Form8871.new(@line, form_properties[:form_8871], @type)
+      else
+        Form8872.new(@line, form_properties[:form_8872], @type)
+      end
+
+      form.parse_properties
     end
 
-    def parse_line
-      form =  if @line[0] == "1"
-                Form8871.new(@line, form_properties[:form_8871])
-              elsif @line[0] == "2"
-                Form8872.new(@line, form_properties[:form_8872])
-              end
+    def type
+      @type ||= case @line[0]
+                when "1"
+                  {form_type: :form_8871, length: 44, ein: @line[6]}
+                when "2"
+                  {form_type: :form_8872, length: 49, ein: @line[10]}
+                when "B"
+                  {form_type: :sched_b, length: 17, ein: @line[4]}
+                when "R"
+                  {form_type: :r_record, length: 13, ein: @line[4]}
+                when "D"
+                  {form_type: :d_record, length: 13, ein: @line[4]}
+                when "E"
+                  {form_type: :e_record, length: 5}
+                when "A"
+                  {form_type: :sched_a, length: 17, ein: @line[4]}
+                else
+                  nil
+                end
+    end
 
-      if form.truncated?
-        return form
-      else
-        form.parse_properties
-        form.line = nil
-        return form
-      end
+    def incomplete?
+      @line.length < @type[:length]
+    end
+
+    def <<(truncated_data)
+      @line[-1] << truncated_data.shift
+      @line.concat(truncated_data)
+    end
+
+    def supplementary?
+      ["B", "E", "A", "R", "D"].include?(@line[0])
     end
 
     def form_properties(form={})
@@ -96,9 +129,13 @@ module Irs527
       return hash
     end
 
-    def update(form)
-      record_type = "#{@line[0].downcase}_record=".to_sym
-      form.send(record_type, @line)
+    def primary?
+      @type[:form_type] == :form_8871 || @type[:form_type] == :form_8872
+    end
+
+    def update(sub_form)
+      record_type = @type[:form_type]
+      form.send("#{record_type}=", @line)
     end
   end
 end

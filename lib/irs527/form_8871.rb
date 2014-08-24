@@ -1,7 +1,7 @@
 module Irs527
   class Form8871 < Form
     attr_accessor :line
-    attr_reader :e_records, :r_records, :d_records
+    attr_reader :e_records, :r_records, :d_records, :ein, :org_name
 
     FOOTERS = [
       :exempt_8872, :exempt_state, :exempt_990,
@@ -9,27 +9,15 @@ module Irs527
       :related_entity_bypass, :eain_bypass
     ]
 
-    HEADERS = [:record_type, :form_type, :form_id, :init_rpt, :amend_rpt, :final_rpt, :ein]
+    HEADERS = [:record_type, :form_type, :form_id, :init_rpt, :amend_rpt, :final_rpt, :ein, :org_name]
 
-    def initialize(line, properties)
+    def initialize(line, properties, type)
       @line = line
       @properties = properties
       @d_records = []
       @r_records = []
       @e_records = []
-    end
-
-    def truncated?
-      @line.length < 44
-    end
-
-    def incomplete?
-      !@line.nil?
-    end
-
-    def truncated=(missing_fields)
-      @line[-1] << missing_fields.shift
-      @line.concat(missing_fields)
+      @type = type
     end
 
     def parse_properties
@@ -42,6 +30,8 @@ module Irs527
           footer(@line[value])
         end
       end
+
+      return self
     end
 
     def parse_address(category, sub_hash)
@@ -58,6 +48,10 @@ module Irs527
       end
     end
 
+    def non_amend?
+      false
+    end
+
     def footer(foot)
       FOOTERS.each_with_index do |f,i|
         format(f, foot[i]) { |field| instance_variable_set("@#{f}", field) }
@@ -68,6 +62,10 @@ module Irs527
       HEADERS.each_with_index do |h,i|
         format(h, head[i]) { |field| instance_variable_set("@#{h}", field) }
       end
+    end
+
+    def sum
+      0
     end
 
     def d_record=(supp_line)
