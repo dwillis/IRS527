@@ -7,23 +7,22 @@ module Irs527
     end
 
     def search_by_name(name)
-      names.find { |org| org[0] == name }
+      names.find { |org| org[0] == name } || "None by that name"
     end
 
     def names
-      @forms.keys.map { |form| [@forms[name].name, form] }
-    end
-
-    def most_recent_filing(ein)
-      filings = @forms[ein]
-      filings.sort_by { |filing| filing.date }
+      @forms.keys.map { |form| [@forms[form][0].name, form] }
     end
 
     def size
-      @forms.keys.map { |form| form.length }
+      @forms.keys.map { |form| @forms[form].length }
     end
 
-    def show_non_amended_reports(ein)
+    def most_recent_non_amend(ein)
+      @forms[ein].max { |form| form.date }
+    end
+
+    def non_amended(ein)
       @forms[ein].select { |form| form.non_amend? }
     end
 
@@ -42,10 +41,13 @@ module Irs527
 
     def sum_contributions(ein=nil)
       if ein
-        @forms[ein].inject { |x,y| x.is_a?(Form8872) ? x.contribution_total + y.contribution_total : 0.0 }
+        non_amended(ein).inject { |x,y| x.contrib_total + y.contrib_total }
       else
-        @forms.keys.map { |ein| sum_contributions(ein) }.inject { |x, y| x + y }
+        @forms.keys.map { |ein| sum_contributions(ein) }.inject { |x,y| x + y }
       end
+    end
+
+    def forms_8872
     end
 
     def []=(ein, form)
