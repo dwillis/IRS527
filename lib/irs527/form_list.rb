@@ -19,7 +19,7 @@ module Irs527
     end
 
     def most_recent_non_amend(ein)
-      @forms[ein].max { |form| form.date }
+      non_amended(ein).max { |form| form.date }
     end
 
     def non_amended(ein)
