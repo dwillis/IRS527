@@ -1,0 +1,37 @@
+1|8871|9607016|1|0|0|454919869|BOB SQUERI FOR DISTRICT 7 SUPERVISOR 2012|650 TOWNSEND ST STE 234||San Francisco|CA|94103||crbrodeur@gmail.com|20120312|Bob Squeri|650 TOWNSEND ST STE 234||San Francisco|CA|94103||Bob Squeri|650 TOWNSEND ST STE 234||San Francisco|CA|94103||650 TOWNSEND ST STE 234||San Francisco|CA|94103||1|CA|0|To elect the candidate Robert Squeri to the office of Supervisor in San Francisco, California, by influencing registered voters to vote for him in the November 6th, 2012 election.||2012-04-03 15:09:32|1|0
+D|9607016|87539|BOB SQUERI FOR DISTRICT 7 SUPERVISOR 2012|454919869|Bob Squeri|Treasurer|650 TOWNSEND ST STE 234||San Francisco|CA|94103||
+D|9607016|87540|BOB SQUERI FOR DISTRICT 7 SUPERVISOR 2012|454919869|Bob Squeri|Candidate|650 TOWNSEND ST STE 234||San Francisco|CA|94103||
+E|9607016|10551|1346150|CA|
+1|8871|9606994|0|1|0|593417598|Florida Chamber of Commerce CCE|P.O. Box 11309||Tallahassee|FL|32302|3309|aholland@flchamber.com|19960701|D. Alan Holland|P.O. Box 11309||Tallahassee|FL|32302|3309|D. Alan Holland|P.O. Box 11309||Tallahassee|FL|32302|3309|P.O. Box 11309||Tallahassee|FL|32302|3309|1|FL|0|To provide the Florida Chamber of Commerce, its divisions and subsidiaries, employees, board of directors, members and others in the state of Florida the opportunity to participate in the democratic process by collecting and accumulating funds to be used to support candidates for state public office who promote the highest standards of excellence and service in government which are consistent with the goals and objectives of the Florida Chamber of Commerce. |20120302|2012-04-02 16:18:02|0|0
+R|9606994|51546|Florida Chamber of Commerce CCE|593417598|Trade and Logistics CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51547|Florida Chamber of Commerce CCE|593417598|Northeast Florida Chamber Alliance CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51548|Florida Chamber of Commerce CCE|593417598|East Central Florida Chamber Alliance CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51549|Florida Chamber of Commerce CCE|593417598|Partnership for Florida's Future, Inc.|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51550|Florida Chamber of Commerce CCE|593417598|Florida Chamber of Commerce Alliance, Inc.|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51551|Florida Chamber of Commerce CCE|593417598|Southwest Florida Regional Chamber Alliance CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51552|Florida Chamber of Commerce CCE|593417598|Southeast Florida Chamber Alliance CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51553|Florida Chamber of Commerce CCE|593417598|West Central Florida Chamber Alliance CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51554|Florida Chamber of Commerce CCE|593417598|Northwest Florida Chamber Alliance CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51555|Florida Chamber of Commerce CCE|593417598|Florida Jobs PAC CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51556|Florida Chamber of Commerce CCE|593417598|Florida Chamber Free Enterprise CCE|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+R|9606994|51557|Florida Chamber of Commerce CCE|593417598|Florida Chamber of Commerce, Inc.|Connected|P.O. Box 11309||Tallahassee|FL|32302|3309|
+D|9606994|87513|Florida Chamber of Commerce CCE|593417598|Alan Holland|Treasurer / Director|P.O. Box 11309||Tallahassee|FL|32302|3309|
+D|9606994|87514|Florida Chamber of Commerce CCE|593417598|Bill Hunter|Director|Assn of Fla Community Developers|307 W Park Ave Ste 214|Tallahassee|FL|32301|1422|
+D|9606994|87515|Florida Chamber of Commerce CCE|593417598|Marian Johnson|Registered Agent|P.O. Box 11309||Tallahassee|FL|32302|3309|
+D|9606994|87516|Florida Chamber of Commerce CCE|593417598|Mark Wilson|Director|P.O. Box 11309||Tallahassee|FL|32302|3309|
+D|9606994|87517|Florida Chamber of Commerce CCE|593417598|Cindi Marsiglio|Director|Wal-Mart Stores, Inc.|3539 Apalachee Pkwy, Suite 3-148|Tallahassee|FL|32311|5331|
+D|9606994|87518|Florida Chamber of Commerce CCE|593417598|Jennifer Green|Director|Liberty Partners Of Florida|325 W College Ave|Tallahassee|FL|32301|1403|
+D|9606994|87519|Florida Chamber of Commerce CCE|593417598|Fred Leonhardt|Director|GrayRobinson|301 East Pine Street, Suite 1400|Orlando|FL|32801|2741|
+D|9606994|87520|Florida Chamber of Commerce CCE|593417598|Matthew Halme|Director|OSI Restaurant Partners, LLC|2202 N West Shore Blvd, 5th Floor|Tampa|FL|33607|5761|
+D|9606994|87521|Florida Chamber of Commerce CCE|593417598|Mark Delegal|Chair / Director|Pennington, Moore, Wilkinson, Bell |215 S Monroe St Ste 200|Tallahassee|FL|32301|1852|
+D|9606994|87522|Florida Chamber of Commerce CCE|593417598|Charlotte Brand Audie|Director|Florida Outdoor Advertising Assn., |314 N Gadsden St Ste 1|Tallahassee|FL|32301|7616|
+2|8872|9572060|20070701|20071231|1|0|0|0|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|615 South Second Street||Springfield|IL|62704||bobs@afscmeillinois.org|20000830|William R. Sarver|615 South Second Street||Springfield|IL|62704||William R. Sarver|615 South Second Street||Springfield|IL|62704||615 South Second Street||Springfield|IL|62704||4|||||0|10000|0|7700|2008-01-29 10:57:09|
+A|9572060|1482114|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|AFSCME Political Contribution|615 South Second Street||Springfield|IL|62704||N/A|10000|N/A|10000|20071214|
+B|9572060|1482115|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|Glasgow for Will County|54 N. Ottawa Street||Joliet|IL|60432||N/A|500|N/A|20070709|Fundraiser|
+B|9572060|1482116|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|Illinois Legislative Black Caucus|P.O. Box 12101||Springfield|IL|62791||N/A|1000|N/A|20070716|Contribution|
+B|9572060|1482117|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|Citizens for Davlin|P.O. Box 101||Springfield|IL|62705||N/A|700|N/A|20070717|Contribution|
+B|9572060|1482118|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|Citizens for Paul Kaupas|P.O. Box 311||New Lenox|IL|60451||N/A|500|N/A|20070814|4th Annual Golf Outing Fundraiser|
+B|9572060|1482119|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|Committee to Elect Larry Walsh|P.O. Box 86||Elwood|IL|60421||N/A|1000|N/A|20071017|Fundraiser|
+B|9572060|1482120|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|Committee to Elect Tyler Edmonds|P.O. Box 82|349 Mt. Glen Road|Cobden|IL|62920||N/A|500|N/A|20071217|Contribution|
+B|9572060|1482121|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|Citizens for Renee Robinson|403 W. Galena Blvd|Suite 205|Aurora|IL|60506||N/A|500|N/A|20071217|Contribution|
+B|9572060|1482122|AFSCME ILLINOIS POLITICAL-LOCAL GOVERNMENT ACCOUNT|371401847|Community to Elect Eugene Moore|9 N. 5th Avenue||Maywood|IL|60152||N/A|3000|N/A|20071221|Contribution|
