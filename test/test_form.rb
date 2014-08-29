@@ -42,7 +42,8 @@ class TestForm < MiniTest::Test
     form_8871, form_8872 = @form_8871.create!, @form_8872.create!
     d_records = form_8871.send("#{@supp_8871.type[:form_type]}=", @supp_8871.line)
     sched_as = form_8872.send("#{@supp_8872.type[:form_type]}=", @supp_8872.line)
-    assert d_records.is_a?(Array)
+    assert form_8871.d_records.length == 1
+    assert form_8872.sched_a_forms.length == 1
   end
 end
 
