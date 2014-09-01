@@ -1,7 +1,6 @@
 module Irs527
 
   class Form
-
     def self.valid?(line)
       line[0] && ['B', 'E', 'A', 'R', 'D', '1', '2'].include?(line[0])
     end
@@ -13,15 +12,16 @@ module Irs527
 
     attr_accessor :line
 
-    def initialize(line)
+    def initialize(line, supplementary=nil)
       @line = line
+      @supplementary = supplementary
     end
 
     def create!
-      form = if @type[:form_type] == :form_8871
-        Form8871.new(@line, form_properties[:form_8871], @type)
+      form = if type[:form_type] == :form_8871
+        Form8871.new(@line, form_properties[:form_8871], type)
       else
-        Form8872.new(@line, form_properties[:form_8872], @type)
+        Form8872.new(@line, form_properties[:form_8872], type)
       end
 
       form.parse_properties
@@ -49,7 +49,7 @@ module Irs527
     end
 
     def incomplete?
-      @line.length < @type[:length]
+      @line.length < type[:length]
     end
 
     def <<(truncated_data)
@@ -97,7 +97,7 @@ module Irs527
       val = if exemption?(property)
               val == "1"
             elsif date_check?(property)
-              val.length <= 8 ? Date.strptime(val, "%Y%m%d") : Date.strptime(val, "%Y-%m-%d %H:%M:%S")
+              val.length == 8 ? Date.strptime(val, "%Y%m%d") : Date.strptime(val, "%Y-%m-%d %H:%M:%S")
             else
               val
             end
@@ -130,11 +130,11 @@ module Irs527
     end
 
     def primary?
-      @type[:form_type] == :form_8871 || @type[:form_type] == :form_8872
+      type[:form_type] == :form_8871 || type[:form_type] == :form_8872
     end
 
-    def update(sub_form)
-      record_type = @type[:form_type]
+    def update(form)
+      record_type = type[:form_type]
       form.send("#{record_type}=", @line)
     end
   end

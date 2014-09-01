@@ -1,8 +1,10 @@
 require "irs527/version"
 require "irs527/form"
+require "irs527/form_list"
 require "irs527/form_8871"
 require "irs527/form_8872"
 require "net/http"
+require "csv"
 module Irs527
 
   class Utility
@@ -34,26 +36,93 @@ module Irs527
       return @file
     end
 
+    def self.generate_index(path, output)
+      file = File.open(path)
+      # file_size = -> (pos) { puts "%#{pos.fdiv(File.size(path)).round(2)} complete"; system("clear") }
+      file_detail = file.readline
+      offset = file_detail.bytesize
+
+      records = {}
+      loop do
+        break if file.eof?
+        offset = file.pos
+        line = file.readline.encode('UTF-8', invalid: :replace, replace: ' ')
+
+        # file_size.call(offset)
+
+        if line[0..1] == "1|" || line[0..1] == "2|"
+          form = Form.new(line.split("|"))
+          @ein = form.type[:ein]
+
+          if records[@ein]
+            records[@ein] << { offset: offset, length: line.length }
+          else
+            records[@ein] = [{ offset: offset, length: line.length }]
+          end
+        else
+          records[@ein][-1][:length] += line.length
+        end
+      end
+
+      CSV.open("#{output}/record_index.csv", "w") do |csv|
+        records.each do |ein,forms|
+          csv << [ein] + forms.map { |form| [ form[:length], form[:offset] ] }.flatten
+        end
+      end
+
+      file.close
+
+      FormList.load("#{output}/record_index.csv", path)
+    end
+
+    def self.parse_form(data_chunk)
+      forms = data_chunk.split("\n").map { |form| form.split("|") }
+
+      primary_form = Form.new(forms.shift)
+      while primary_form.incomplete?
+        primary_form << forms.shift
+      end
+
+      primary_form = primary_form.create!
+
+      forms.each do |form|
+        if Form.valid?(form)
+          form = Form.new(form)
+          form.update(primary_form)
+        end
+      end
+
+      return primary_form
+    end
+
     def self.parse(path)
       file = File.open(path)
-      forms = {}
+      forms = FormList.new
       file_detail = file.readline.chomp.split("|")
       loop do
         break if file.eof?
         line = file.readline.encode('UTF-8', invalid: :replace, replace: ' ')
-        line = line.chomp.split("|")
+        line = line.split("|")
 
         if Form.valid?(line)
           form = Form.new(line)
-          @ein_pointer = form.ein
-          if forms[@ein_pointer]
-            forms[@ein_pointer] << form
-          else
-            forms[@ein_pointer] = [form]
-          end
-        end
+          ein = form.type[:ein]
 
-        binding.pry
+          @primary = ein if form.primary?
+          if form.incomplete?
+            forms.incomplete = form
+          else
+            if form.supplementary?
+              forms.supplementary_update(@primary, form)
+            elsif forms[@primary]
+              forms.add(@primary, form)
+            else
+              forms[@primary] = form
+            end
+          end
+        else
+          forms.fix_incomplete(@line)
+        end
 
 
         # if !line.empty?

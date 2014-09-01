@@ -85,6 +85,16 @@ module Irs527
       Date::ABBR_MONTHNAMES[val.to_i]
     end
 
+    def to_hash
+      Hash[attributes.map { |a| [a[1..-1], instance_variable_get(a)]}]
+    end
+
+    def attributes
+      instance_variables.reject do |var|
+        [:@type, :@line, :@sched_b_forms, :@sched_a_forms, :@properties].include?(var)
+      end
+    end
+
     def footer(foot)
       FOOTERS.each_with_index do |f,i|
         value = case f

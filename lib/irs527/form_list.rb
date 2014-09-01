@@ -2,8 +2,26 @@ module Irs527
   class FormList
     attr_accessor :incomplete
 
-    def initialize
-      @forms = {}
+
+    def self.load(csv_file, file)
+      form_paths = {}
+
+      CSV.foreach(csv_file) do |row|
+        ein = row.shift
+
+        form_paths[ein] = ->() {
+          row.each_slice(2).map do |form|
+            Utility.parse_form(IO.read(file, form[0].to_i, form[1].to_i))
+          end
+        }
+      end
+
+      new(form_paths, file)
+    end
+
+    def initialize(forms, file)
+      @forms = forms
+      @file = file
     end
 
     def search_by_name(name)
@@ -61,7 +79,15 @@ module Irs527
     end
 
     def [](ein)
-      @forms[ein]
+      if @forms[ein]
+        if @forms[ein].is_a?(Proc)
+          @forms[ein] = @forms[ein].call
+        else
+          @forms[ein]
+        end
+      else
+        puts "#{ein} not found."
+      end
     end
 
     def add(ein, form)
@@ -73,7 +99,6 @@ module Irs527
     end
 
     def fix_incomplete(line)
-      p line
       if @incomplete
         @incomplete << line
 
@@ -85,6 +110,17 @@ module Irs527
             add(ein, @incomplete)
           end
           @incomplete = nil
+        end
+      end
+    end
+
+    def to_csv
+      CSV.open("file_map.csv", "w") do |csv|
+        @forms.each do |k,v|
+          line = @forms[k]
+          ein = line.shift
+          form_route = line.map { |p| [p[:length], p[:offset]] }.flatten
+          csv << ([ein] + form_route)
         end
       end
     end
