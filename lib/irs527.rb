@@ -5,8 +5,9 @@ require "irs527/form_8871"
 require "irs527/form_8872"
 require "net/http"
 require "csv"
-module Irs527
+require "zip"
 
+module Irs527
   class Utility
     def self.retrieve_data(path)
       Net::HTTP.start("forms.irs.gov") do |http|
@@ -38,7 +39,6 @@ module Irs527
 
     def self.generate_index(path, output)
       file = File.open(path)
-      # file_size = -> (pos) { puts "%#{pos.fdiv(File.size(path)).round(2)} complete"; system("clear") }
       file_detail = file.readline
       offset = file_detail.bytesize
 
@@ -71,7 +71,6 @@ module Irs527
       end
 
       file.close
-
       FormList.load("#{output}/record_index.csv", path)
     end
 
@@ -93,59 +92,6 @@ module Irs527
       end
 
       return primary_form
-    end
-
-    def self.parse(path)
-      file = File.open(path)
-      forms = FormList.new
-      file_detail = file.readline.chomp.split("|")
-      loop do
-        break if file.eof?
-        line = file.readline.encode('UTF-8', invalid: :replace, replace: ' ')
-        line = line.split("|")
-
-        if Form.valid?(line)
-          form = Form.new(line)
-          ein = form.type[:ein]
-
-          @primary = ein if form.primary?
-          if form.incomplete?
-            forms.incomplete = form
-          else
-            if form.supplementary?
-              forms.supplementary_update(@primary, form)
-            elsif forms[@primary]
-              forms.add(@primary, form)
-            else
-              forms[@primary] = form
-            end
-          end
-        else
-          forms.fix_incomplete(@line)
-        end
-
-
-        # if !line.empty?
-        #   if ("BEARD12".include?(line[0]) && line[0] != "")
-        #     form = Form.new(line)
-        #     if form.supplementary?
-        #       primary_form = forms.last
-        #       form.update(primary_form)
-        #     else
-        #       forms << form.parse_line
-        #     end
-        #   else
-        #     primary_form = forms.last
-        #     if primary_form.incomplete?
-        #       primary_form.truncated = line
-        #       forms[-1] = primary_form.parse_line
-        #     end
-        #   end
-        # end
-      end
-
-      file.close
-      return forms
     end
   end
 end
