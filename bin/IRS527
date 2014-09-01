@@ -2,15 +2,21 @@
 require "Irs527"
 require "zip"
 require "net/http"
+require "sequel"
+require "pry"
 
-
-path, command = ARGV
+path, command, ext = ARGV
 
 case command
 when "-p"
   file = Irs527::Utility.retrieve_data(path)
   Irs527::Utility.parse("#{path}/#{file}")
 when "-r"
+when "-db"
+  data = Irs527::Utility.parse(path)
+
+  DB = Sequel.connect(ext)
+  data.port_to_db(DB)
 else
   Irs527::Utility.parse(path)
 end
