@@ -1,7 +1,7 @@
 module Irs527
   class Form8872 < Form
     attr_accessor :line
-    attr_reader :sched_b_forms, :sched_a_forms, :ein, :name, :date
+    attr_reader :sched_b_forms, :sched_a_forms, :ein, :name, :date, :total_sched_a, :total_sched_b
 
     HEADERS = [:record_type, :form_type, :form_id, :period_beg_date, :period_end_date,
       :init_rpt, :amend_rpt, :final_rpt, :change_of_addr, :name, :ein]
@@ -83,6 +83,16 @@ module Irs527
 
     def monthly(val)
       Date::ABBR_MONTHNAMES[val.to_i]
+    end
+
+    def to_hash
+      Hash[attributes.map { |a| [a[1..-1], instance_variable_get(a)]}]
+    end
+
+    def attributes
+      instance_variables.reject do |var|
+        [:@type, :@line, :@sched_b_forms, :@sched_a_forms, :@properties].include?(var)
+      end
     end
 
     def footer(foot)

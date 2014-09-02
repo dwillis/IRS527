@@ -1,10 +1,13 @@
 require "irs527/version"
 require "irs527/form"
+require "irs527/form_list"
 require "irs527/form_8871"
 require "irs527/form_8872"
 require "net/http"
-module Irs527
+require "csv"
+require "zip"
 
+module Irs527
   class Utility
     def self.retrieve_data(path)
       Net::HTTP.start("forms.irs.gov") do |http|
@@ -34,49 +37,61 @@ module Irs527
       return @file
     end
 
-    def self.parse(path)
+    def self.generate_index(path, output)
       file = File.open(path)
-      forms = {}
-      file_detail = file.readline.chomp.split("|")
+      file_detail = file.readline
+      offset = file_detail.bytesize
+
+      records = {}
       loop do
         break if file.eof?
+        offset = file.pos
         line = file.readline.encode('UTF-8', invalid: :replace, replace: ' ')
-        line = line.chomp.split("|")
 
-        if Form.valid?(line)
-          form = Form.new(line)
-          @ein_pointer = form.ein
-          if forms[@ein_pointer]
-            forms[@ein_pointer] << form
+        # file_size.call(offset)
+
+        if line[0..1] == "1|" || line[0..1] == "2|"
+          form = Form.new(line.split("|"))
+          @ein = form.type[:ein]
+
+          if records[@ein]
+            records[@ein] << { offset: offset, length: line.length }
           else
-            forms[@ein_pointer] = [form]
+            records[@ein] = [{ offset: offset, length: line.length }]
           end
+        else
+          records[@ein][-1][:length] += line.length
         end
+      end
 
-        binding.pry
-
-
-        # if !line.empty?
-        #   if ("BEARD12".include?(line[0]) && line[0] != "")
-        #     form = Form.new(line)
-        #     if form.supplementary?
-        #       primary_form = forms.last
-        #       form.update(primary_form)
-        #     else
-        #       forms << form.parse_line
-        #     end
-        #   else
-        #     primary_form = forms.last
-        #     if primary_form.incomplete?
-        #       primary_form.truncated = line
-        #       forms[-1] = primary_form.parse_line
-        #     end
-        #   end
-        # end
+      CSV.open("#{output}/record_index.csv", "w") do |csv|
+        records.each do |ein,forms|
+          csv << [ein] + forms.map { |form| [ form[:length], form[:offset] ] }.flatten
+        end
       end
 
       file.close
-      return forms
+      FormList.load("#{output}/record_index.csv", path)
+    end
+
+    def self.parse_form(data_chunk)
+      forms = data_chunk.split("\n").map { |form| form.split("|") }
+
+      primary_form = Form.new(forms.shift)
+      while primary_form.incomplete?
+        primary_form << forms.shift
+      end
+
+      primary_form = primary_form.create!
+
+      forms.each do |form|
+        if Form.valid?(form)
+          form = Form.new(form)
+          form.update(primary_form)
+        end
+      end
+
+      return primary_form
     end
   end
 end

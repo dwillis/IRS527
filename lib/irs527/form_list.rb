@@ -2,20 +2,26 @@ module Irs527
   class FormList
     attr_accessor :incomplete
 
-    def initialize
-      @forms = {}
+
+    def self.load(csv_file, file)
+      form_paths = {}
+
+      CSV.foreach(csv_file) do |row|
+        ein = row.shift
+
+        form_paths[ein] = ->() {
+          row.each_slice(2).map do |form|
+            Utility.parse_form(IO.read(file, form[0].to_i, form[1].to_i))
+          end
+        }
+      end
+
+      new(form_paths, file)
     end
 
-    def search_by_name(name)
-      names.find { |org| org[0] == name } || "None by that name"
-    end
-
-    def names
-      @forms.keys.map { |form| [@forms[form][0].name, form] }
-    end
-
-    def size
-      @forms.keys.map { |form| @forms[form].length }
+    def initialize(forms, file)
+      @forms = forms
+      @file = file
     end
 
     def most_recent_non_amend(ein)
@@ -27,65 +33,33 @@ module Irs527
     end
 
     def all_non_amended
+      # Expensive method. Do not use this.
       non_amended = []
       @forms.each do |ein,form_list|
+        @forms[ein] = form_list.call if form_list.is_a?(Proc)
         non_amended << form_list.select { |form| form.non_amend? }
       end
 
       non_amended
     end
 
-    def keys
+    def eins
       @forms.keys
     end
 
-    def sum_contributions(ein=nil)
-      if ein
-        non_amended(ein).inject { |x,y| x.contrib_total + y.contrib_total }
-      else
-        @forms.keys.map { |ein| sum_contributions(ein) }.inject { |x,y| x + y }
-      end
-    end
-
-    def forms_8872
-    end
-
-    def []=(ein, form)
-      @forms[ein] = [form.create!]
-    end
-
-    def supplementary_update(ein, sub_form)
-      form_type = sub_form.type[:form_type]
-      primary_form = @forms[ein].last
-      primary_form.send("#{form_type}=", sub_form.line)
+    def sum_contributions(ein)
+      non_amended(ein).inject { |x,y| x.contrib_total + y.contrib_total }
     end
 
     def [](ein)
-      @forms[ein]
-    end
-
-    def add(ein, form)
       if @forms[ein]
-        @forms[ein] << form.create!
-      else
-        @forms[ein] = [form.create!]
-      end
-    end
-
-    def fix_incomplete(line)
-      p line
-      if @incomplete
-        @incomplete << line
-
-        unless @incomplete.incomplete?
-          ein = @incomplete.type[:ein]
-          if @incomplete.supplementary?
-            supplementary_update(ein, @incomplete)
-          else
-            add(ein, @incomplete)
-          end
-          @incomplete = nil
+        if @forms[ein].is_a?(Proc)
+          @forms[ein] = @forms[ein].call
+        else
+          @forms[ein]
         end
+      else
+        puts "#{ein} not found."
       end
     end
   end
