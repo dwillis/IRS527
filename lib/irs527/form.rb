@@ -30,9 +30,9 @@ module Irs527
     def type
       @type ||= case @line[0]
                 when "1"
-                  {form_type: :form_8871, length: 44, ein: @line[6]}
+                  {form_type: :form_8871, length: 44, ein: @line[6], name: @line[7]}
                 when "2"
-                  {form_type: :form_8872, length: 49, ein: @line[10]}
+                  {form_type: :form_8872, length: 49, ein: @line[10], name: @line[9]}
                 when "B"
                   {form_type: :sched_b, length: 17, ein: @line[4]}
                 when "R"
