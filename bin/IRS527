@@ -3,20 +3,30 @@ require "Irs527"
 require "zip"
 require "net/http"
 require "sequel"
-require "pry"
+require "thor"
+require "csv"
 
-path, command, ext = ARGV
+module Irs527
+  class IrsCLI < Thor
+    option :name
+    option :ein
+    desc "Hello NAME", "say hello to NAME"
 
-case command
-when "-p"
-  file = Irs527::Utility.retrieve_data(path)
-  Irs527::Utility.parse("#{path}/#{file}")
-when "-r"
-when "-db"
-  data = Irs527::Utility.parse(path)
-
-  DB = Sequel.connect(ext)
-  data.port_to_db(DB)
-else
-  Irs527::Utility.parse(path)
+    option :name
+    option :ein
+    desc "Finds GREP", "Returns records of GREP"
+    def grep(query)
+      query = Regexp.new(query)
+      loc = if options[:name]
+        CSV.read("records.csv").select { |row| row[1] =~ query }
+      elsif options[:ein]
+        CSV.read("records.csv").select { |row| row[0] =~ query }
+      end
+    end
+  end
 end
+
+Irs527::IrsCLI.start(ARGV)
+
+
+
