@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "zip"
   spec.add_development_dependency "sequel"
   spec.add_development_dependency "pry"
+  spec.add_development_dependency "thor"
 end
