@@ -8,20 +8,62 @@ require "csv"
 
 module Irs527
   class IrsCLI < Thor
-    option :name
-    option :ein
-    desc "Hello NAME", "say hello to NAME"
+    desc "Downloads the Data File to PATH", "Deposits file in PATH"
+    def download(path)
+      Irs527::Utility.retrieve_data(path)
+    end
+
+    desc "Generate INDEX in PATH", "Deposits INDEX in PATH"
+    def generate_index(path, index)
+      if File.file?(path)
+        Irs527::Utility.generate_index(path, index)
+      else
+        puts "#{path} is not a file"
+      end
+    end
 
     option :name
     option :ein
     desc "Finds GREP", "Returns records of GREP"
     def grep(query)
       query = Regexp.new(query)
-      loc = if options[:name]
+      locs = if options[:name]
         CSV.read("records.csv").select { |row| row[1] =~ query }
       elsif options[:ein]
         CSV.read("records.csv").select { |row| row[0] =~ query }
       end
+
+
+
+
+      form_list = Irs527::FormList.load("records.csv", "FullDataFile.txt")
+
+      locs.map! { |loc| form_list[loc[0]] }
+      p locs
+    end
+
+    option :total
+    option :na
+    desc "Finds organization by their EIN", "Returns FORMS, with option of FORM TYPE"
+
+    def ein(ein_num, form_type=nil)
+      form_list = Irs527::FormList.load("new_records.csv", "FullDataFile.txt", form_type)
+
+      if form_list[ein_num]
+        form_list.search_by_ein(ein_num)
+      else
+        puts "#{ein_num} Not Found."
+      end
+    end
+
+    option :non_amend
+    desc "Finds total contributions for EIN", "Returns TOTAL"
+
+    def total(ein_num, form_type="form_8872")
+      form_list = Irs527::FormList.load("new_records.csv", "FullDataFile", form_type)
+
+      if form_list[ein_num]
+        form_list.sum_contributions(ein_num, option[:non_amend])
     end
   end
 end
