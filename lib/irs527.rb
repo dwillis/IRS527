@@ -1,8 +1,9 @@
 require "irs527/version"
 require "irs527/form"
-require "irs527/form_list"
-require "irs527/form_8871"
-require "irs527/form_8872"
+require "irs527/query"
+require "irs527/form/form_list"
+require "irs527/form/form_8871"
+require "irs527/form/form_8872"
 require "net/http"
 require "csv"
 require "zip"
@@ -55,26 +56,24 @@ module Irs527
           form = Form.new(line.split("|"))
           @ein = form.type[:ein]
           name = form.type[:name]
+          type = form.type[:form_type]
           if records[@ein]
-            records[@ein][:forms] << { offset: offset, length: line.length }
+            records[@ein][:forms] << { offset: offset, length: line.length, type: type }
           else
-            records[@ein] = {forms: [{ offset: offset, length: line.length }], name: name }
+            records[@ein] = {forms: [{ offset: offset, length: line.length, type: type }], name: name }
           end
         else
           records[@ein][:forms][-1][:length] += line.length
         end
       end
 
-      CSV.open("#{output}/record_index.csv", "w") do |csv|
+      CSV.open("#{output}", "w") do |csv|
         records.each do |ein,entry|
           name = entry[:name]
           forms = entry[:forms]
-          csv << [ein, name] + forms.map { |form| [ form[:length], form[:offset] ] }.flatten
+          csv << [ein, name] + forms.map { |form| [ form[:type], form[:length], form[:offset] ] }.flatten
         end
       end
-
-      file.close
-      FormList.load("record_index.csv", path)
     end
 
     def self.parse_form(data_chunk)
@@ -94,7 +93,7 @@ module Irs527
         end
       end
 
-      primary_form.clear_line
+      primary_form.line = ''
       return primary_form
     end
   end
