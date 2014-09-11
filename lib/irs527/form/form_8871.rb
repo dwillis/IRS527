@@ -1,7 +1,7 @@
 module Irs527
   class Form8871 < Form
     attr_accessor :line
-    attr_reader :e_records, :r_records, :d_records, :ein, :org_name
+    attr_reader :e_records, :r_records, :d_records, :ein, :org_name, :purpose, :date
 
     FOOTERS = [
       :exempt_8872, :exempt_state, :exempt_990,
@@ -62,10 +62,6 @@ module Irs527
       HEADERS.each_with_index do |h,i|
         format(h, head[i]) { |field| instance_variable_set("@#{h}", field) }
       end
-    end
-
-    def sum
-      0
     end
 
     def d_record=(supp_line)

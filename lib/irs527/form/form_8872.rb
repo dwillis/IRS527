@@ -158,12 +158,12 @@ module Irs527
       !@line.nil?
     end
 
-    def expend_total
-      @sched_b_forms.inject { |x,y| x + y }
+    def expenditure_total
+      @sched_b_forms.map { |x| x[:expenditure_amt] }.inject(:+)
     end
 
-    def contrib_total
-      @sched_a_forms.inject { |x,y| x[:contrib_amt] + y[:contrib_amt] }
+    def contribution_total
+      @sched_a_forms.map { |x| x[:contrib_amt] }.inject(:+)
     end
   end
 end
