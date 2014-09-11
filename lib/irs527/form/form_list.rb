@@ -1,9 +1,7 @@
 module Irs527
   class FormList
-    attr_accessor :incomplete
+    attr_reader :forms
 
-    # form_list.query(ein, opts={})
-    # form_list.query(ein, non_amend: true, most_recent: true)
     def self.load(csv_file, file, type=nil)
       form_paths = {}
 
@@ -33,46 +31,23 @@ module Irs527
 
     def initialize(forms, file)
       @forms = forms
-      @file = file
-      @query = Query.new
+      @file  = file
     end
 
-    def search_by_name(name)
-      result = []
-      @forms.keys.each do |ein|
-        result << ein if @forms[ein][:name] =~ Regexp.new(name)
-      end
+    def query(ein)
+      Query.new(@forms[ein], ein) if !@forms[ein].nil?
+    end
 
-      return result.map { |ein| @forms[ein][:forms].call }.flatten
+    def names
+      @names ||= @forms.map { |ein, org| {name: org[:name], ein: ein} }
+    end
+
+    def find_by_name(name)
+      names.select { |org| org[:name] =~ Regexp.new(name) }
     end
 
     def [](ein)
       @forms[ein]
-    end
-
-    def search_by_ein(ein)
-      @forms[ein][:forms].call if @forms[ein]
-    end
-
-    def most_recent_non_amend(ein)
-      non_amended(ein).max { |form| form.date } if @forms[ein]
-    end
-
-    def non_amended(ein)
-      @forms[ein][:forms].call.select { |form| form.non_amend? } if @forms[ein]
-    end
-
-    def eins
-      @forms.keys.map { |ein| { name: @forms[ein][:name], ein: ein } }
-    end
-
-    def sum_contributions(ein)
-      if @forms[ein]
-        form_set = @forms[ein][:forms].call
-        form_set.select { |form| form.non_amend? }.inject { |x,y| x.total_sched_a + y.total_sched_b }
-      else
-        0.0
-      end
     end
   end
 end
