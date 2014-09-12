@@ -70,7 +70,9 @@ module Irs527
         director_id: supp_line[2],
         org_name: supp_line[3],
         ein: supp_line[4],
-        addr: addr("D", supp_line[5..10])
+        entity_name: supp_line[5],
+        entity_role: supp_line[6],
+        addr: addr("D", supp_line[7..-1])
       }
     end
 
