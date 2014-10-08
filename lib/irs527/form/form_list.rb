@@ -29,9 +29,10 @@ module Irs527
       new(form_paths, file)
     end
 
-    def initialize(forms, file)
+    def initialize(forms, file, db=nil)
       @forms = forms
       @file  = file
+      @db    = db
     end
 
     def query(ein)
@@ -48,6 +49,19 @@ module Irs527
 
     def [](ein)
       @forms[ein]
+    end
+
+    def db_tables
+      [:organization_reports, :organization_notices, :b_records, :a_records, :e_records, :r_records, :d_records]
+    end
+
+    def create_tables
+      sample = @forms.find { |ein,data| data[:forms][:form_8872].length > 0 }
+
+      
+    end
+
+    def to_db
     end
   end
 end
