@@ -1,7 +1,7 @@
 require "minitest/autorun"
 require "irs527"
 require "date"
-require "pry"
+
 class TestForm < MiniTest::Test
   def setup
     @file = File.readlines("test/sample.txt").map { |line| line.split("|") }
