@@ -1,6 +1,7 @@
 require "minitest/autorun"
 require "irs527"
 require "date"
+require "pry"
 class TestForm < MiniTest::Test
   def setup
     @file = File.readlines("test/sample.txt").map { |line| line.split("|") }
@@ -46,6 +47,3 @@ class TestForm < MiniTest::Test
     assert form_8872.sched_a_forms.length == 1
   end
 end
-
-
-
