@@ -74,6 +74,8 @@ module Irs527
           csv << [ein, name] + forms.map { |form| [ form[:type], form[:length], form[:offset] ] }.flatten
         end
       end
+
+      FormList.load(output, path)
     end
 
     def self.parse_form(data_chunk)
